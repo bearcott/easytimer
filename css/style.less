@@ -2,6 +2,8 @@
 
 body {
 	background: desaturate(darken(@base,20%),30%);
+	margin: 0;
+	padding: 0;
 	color: #FFF;
 	font: 14pt/1.5 Helvetica;
 	transition: background 200ms ease-in-out;
@@ -11,7 +13,7 @@ body.light {
 	color: @base;
 	.clock {
 		.second {
-			color: rgba(0,0,0,0.3);
+			color: saturate(lighten(@base, 30%),20%);
 		}
 		&:hover {
 			background: @base;
@@ -33,6 +35,8 @@ body.light {
 	position: absolute;
 	top: 0;
 	right: 0;
+	text-align: center;
+	width: 30px;
 	font-size: 30px;
 	color: rgba(255,255,255,0.8);
 	&:hover {
