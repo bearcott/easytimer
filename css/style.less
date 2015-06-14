@@ -1,3 +1,72 @@
+@base: #373C93;
+
 body {
-	background: #000;
+	background: desaturate(darken(@base,20%),30%);
+	color: #FFF;
+	font: 14pt/1.5 Helvetica;
+	transition: background 200ms ease-in-out;
+}
+body.light {
+	background: #FFF;
+	color: @base;
+	.clock {
+		.second {
+			color: rgba(0,0,0,0.3);
+		}
+		&:hover {
+			background: @base;
+			color: #FFF;
+			.second {
+				color: rgba(255,255,255,0.2);
+			}
+		}
+	}
+	#brightness { 
+		color: rgba(0,0,0,0.5);
+		&:hover {
+			color: #000;
+			cursor: pointer;
+		}
+	}
+}
+#brightness {  
+	position: absolute;
+	top: 0;
+	right: 0;
+	font-size: 30px;
+	color: rgba(255,255,255,0.8);
+	&:hover {
+		color: #FFF;
+		cursor: pointer;
+	}
+}
+.container {
+	position: absolute;
+	height: 140px;
+	top: 50%;
+	width: 100%;
+	margin-top: -70px;
+	text-align: center;
+	.clock {
+		font-size: 100px;
+		font-weight: 100;
+		margin: auto;
+		padding: 20px;
+		display: inline-block;
+		line-height: 100px;
+		transition: background 200ms ease-in-out;
+		& > * {
+		}
+		.second {
+			color: rgba(255,255,255,0.2);
+		}
+		&:hover {
+			background: #FFF;
+			color: desaturate(darken(@base,20%),30%);
+			cursor: pointer;
+			.second {
+				color: rgba(0,0,0,0.3);
+			}
+		}
+	}
 }
