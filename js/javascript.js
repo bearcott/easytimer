@@ -12,7 +12,10 @@ var Clock = function(container) {
 			this.hour.html(date.getHours() - 12);
 			this.ampm.html("pm");
 		} else {
-			this.hour.html(date.getHours());
+			if (date.getHours() == 0)
+				this.hour.html(12);
+			else
+				this.hour.html(date.getHours());
 			this.ampm.html("am");
 		}
 
