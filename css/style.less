@@ -10,10 +10,10 @@ body {
 }
 body.light {
 	background: #FFF;
-	color: @base;
+	color: saturate(lighten(@base, 30%),20%);
 	.clock {
 		.second {
-			color: saturate(lighten(@base, 30%),20%);
+			color: #ddd;
 		}
 		&:hover {
 			background: @base;
@@ -23,7 +23,7 @@ body.light {
 			}
 		}
 	}
-	#brightness { 
+	.btn { 
 		color: rgba(0,0,0,0.5);
 		&:hover {
 			color: #000;
@@ -31,18 +31,30 @@ body.light {
 		}
 	}
 }
-#brightness {  
-	position: absolute;
-	top: 0;
-	right: 0;
-	text-align: center;
-	width: 30px;
-	font-size: 30px;
+.btn {
 	color: rgba(255,255,255,0.8);
 	&:hover {
 		color: #FFF;
 		cursor: pointer;
 	}
+}
+#brightness {  
+	position: absolute;
+	top: 0;
+	right: 0;
+	text-align: center;
+	margin: 10px;
+	width: 40px;
+	font: 40px/1 Helvetica;
+}
+#menubtn {
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin: 10px;
+	text-align: center;
+	width: 40px;
+	font: 40px/1 Helvetica;
 }
 .container {
 	position: absolute;
