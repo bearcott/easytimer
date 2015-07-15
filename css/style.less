@@ -8,10 +8,14 @@ body {
 	font: 14pt/1.5 Helvetica;
 	transition: background 200ms ease-in-out;
 }
+ul {
+	margin: 0;
+	padding: 0;
+}
 body.light {
-	background: #FFF;
+	background: #F9F9F9;
 	color: saturate(lighten(@base, 30%),20%);
-	.clock {
+	#clock {
 		.second {
 			color: #ddd;
 		}
@@ -30,9 +34,21 @@ body.light {
 			cursor: pointer;
 		}
 	}
+	#menu {
+		background: #FFF;
+		li {
+			&:hover {
+				background: saturate(lighten(@base, 55%),50%) !important;
+			} 
+			&.selected {
+				background: saturate(lighten(@base, 50%),50%);
+			}
+		}
+	}
 }
 .btn {
 	color: rgba(255,255,255,0.8);
+	z-index: 100;
 	&:hover {
 		color: #FFF;
 		cursor: pointer;
@@ -47,7 +63,7 @@ body.light {
 	width: 40px;
 	font: 40px/1 Helvetica;
 }
-#menubtn {
+#togglemenu {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -56,6 +72,34 @@ body.light {
 	width: 40px;
 	font: 40px/1 Helvetica;
 }
+#menu {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 200px;
+	height: 100%;
+	max-width: 100%;
+	background: desaturate(darken(@base,25%),30%);
+	display: none;
+	ul { 
+		padding-top: 60px;
+		list-style: none;
+		li {
+			padding: 20px;
+			i {
+				float: right;
+			}
+			&:hover {
+				background: #000 !important;
+				cursor: pointer;
+			} 
+			&.selected {
+				background: desaturate(darken(@base,30%),30%);
+			}
+		}
+	}
+
+}
 .container {
 	position: absolute;
 	height: 140px;
@@ -63,23 +107,27 @@ body.light {
 	width: 100%;
 	margin-top: -70px;
 	text-align: center;
-	.clock {
-		font-size: 100px;
-		font-weight: 100;
+	.mode {
 		margin: auto;
 		padding: 20px;
-		display: inline-block;
+		font-size: 100px;
+		font-weight: 100;
 		line-height: 100px;
+		display: inline-block;
 		transition: background 200ms ease-in-out;
+		&:hover {
+			background: #FFF;
+			color: desaturate(darken(@base,20%),30%);
+			cursor: pointer;
+		}
+	}
+	#clock {
 		& > * {
 		}
 		.second {
 			color: rgba(255,255,255,0.2);
 		}
 		&:hover {
-			background: #FFF;
-			color: desaturate(darken(@base,20%),30%);
-			cursor: pointer;
 			.second {
 				color: rgba(0,0,0,0.3);
 			}
