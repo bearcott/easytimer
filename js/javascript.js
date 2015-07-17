@@ -1,3 +1,30 @@
+//accurate interval class
+function interval(duration, fn){
+	this.baseline = undefined
+
+	this.run = function(){
+		if(this.baseline === undefined){
+			this.baseline = new Date().getTime()
+		}
+		fn()
+		var end = new Date().getTime()
+		this.baseline += duration
+
+		var nextTick = duration - (end - this.baseline)
+		if(nextTick<0){
+			nextTick = 0
+		}
+		(function(i){
+			i.timer = setTimeout(function(){
+				i.run(end)
+			}, nextTick)
+		}(this))
+	}
+
+	this.stop = function(){
+	clearTimeout(this.timer)
+	}
+}
 
 //clock class
 // mode: 1 - normal, 2 - military, 3 - no seconds
@@ -6,9 +33,12 @@ var Clock = function(container) {
 	this.hour = this.container.find('.hour');
 	this.minute = this.container.find('.minute');
 	this.second = this.container.find('.second');
+	this.mili = this.container.find('.mili');
 	this.ampm = this.container.find('.ampm');
 
 	this.container.addClass('one'); //set the mode to 1
+
+	this.interval;
 
 	this.refresh = function() {
 		var date = new Date();
@@ -33,12 +63,27 @@ var Clock = function(container) {
 			this.second.html((date.getSeconds() < 10) ? "0" + date.getSeconds() : date.getSeconds());
 		else
 			this.second.html("");
-	}
+	};
+	this.start = function() {
+		var curr = new Date();
+		dis = this;
+		$.syncInterval(function() {
+			dis.mili.html(now.getMilliseconds() - curr.getMilliseconds());
+		},1000,500);
+		// this.interval = setInterval(function() {
+		// 	var now = new Date();
+		// 	dis.mili.html(now.getMilliseconds() - curr.getMilliseconds());
+		// }, 100)
+	};
+	this.stop = function() {
+
+	};
 }
 
 
 $(function() {
 	var clock = new Clock($('#clock'));
+	var timer = new Clock($('#timer'));
 
 	//set default mode to clock
 	$('.mode').hide();
@@ -79,6 +124,11 @@ $(function() {
 
 	});
 
+	//timer function
+	$('#timer').click(function() {
+		timer.start();
+	});
+
 	$('#togglemenu').click(function() {
 		if ($('#menu').hasClass('active'))
 			$('#menu').removeClass('active').stop().slideUp(200);
@@ -97,6 +147,14 @@ $(function() {
 			$('.mode').stop().fadeOut(200);
 			$('#timer').stop().delay(200).fadeIn(200);
 		}
-	})
+	});
+
+	$('body').keypress(function(e) {
+		//alert(e.keyCode);
+		if (e.which == 98)
+			$('#brightness').click();
+		if (e.which == 109)
+			$('#togglemenu').click();
+	});
 
 });

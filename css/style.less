@@ -12,19 +12,44 @@ ul {
 	margin: 0;
 	padding: 0;
 }
+.btn {
+	color: rgba(255,255,255,0.8);
+	z-index: 100;
+	&:hover {
+		color: #FFF;
+		cursor: pointer;
+	}
+}
+
 body.light {
 	background: #F9F9F9;
-	color: saturate(lighten(@base, 30%),20%);
+	color: saturate(lighten(@base, 20%),10%);
+	.mode {
+		&:hover {
+			background: saturate(lighten(@base, 20%),10%);
+			color: #FFF;
+			& > * {
+				color: #FFF !important;
+			}
+		}
+	}
 	#clock {
 		.second {
-			color: #ddd;
+			color: #ccc;
 		}
-		&:hover {
-			background: @base;
-			color: #FFF;
-			.second {
-				color: rgba(255,255,255,0.2);
-			}
+	}
+	#timer {
+		.hour {
+			color: saturate(lighten(@base, 15%),10%);
+		}
+		.minute {
+			color: saturate(lighten(@base, 20%),10%);
+		}
+		.second {
+			color: saturate(lighten(@base, 25%),10%);
+		}
+		.mili {
+			color: saturate(lighten(@base, 30%),10%);
 		}
 	}
 	.btn { 
@@ -46,14 +71,9 @@ body.light {
 		}
 	}
 }
-.btn {
-	color: rgba(255,255,255,0.8);
-	z-index: 100;
-	&:hover {
-		color: #FFF;
-		cursor: pointer;
-	}
-}
+
+
+
 #brightness {  
 	position: absolute;
 	top: 0;
@@ -118,6 +138,9 @@ body.light {
 		&:hover {
 			background: #FFF;
 			color: desaturate(darken(@base,20%),30%);
+			& > * {
+				color: desaturate(darken(@base,20%),30%) !important;
+			}
 			cursor: pointer;
 		}
 	}
