@@ -1,30 +1,3 @@
-//accurate interval class
-function interval(duration, fn){
-	this.baseline = undefined
-
-	this.run = function(){
-		if(this.baseline === undefined){
-			this.baseline = new Date().getTime()
-		}
-		fn()
-		var end = new Date().getTime()
-		this.baseline += duration
-
-		var nextTick = duration - (end - this.baseline)
-		if(nextTick<0){
-			nextTick = 0
-		}
-		(function(i){
-			i.timer = setTimeout(function(){
-				i.run(end)
-			}, nextTick)
-		}(this))
-	}
-
-	this.stop = function(){
-	clearTimeout(this.timer)
-	}
-}
 
 //clock class
 // mode: 1 - normal, 2 - military, 3 - no seconds
@@ -121,7 +94,6 @@ $(function() {
 			$this.removeClass('three');
 			$this.addClass('one');
 		}
-
 	});
 
 	//timer function
@@ -129,12 +101,15 @@ $(function() {
 		timer.start();
 	});
 
+	//toggle menu
 	$('#togglemenu').click(function() {
 		if ($('#menu').hasClass('active'))
 			$('#menu').removeClass('active').stop().slideUp(200);
 		else
 			$('#menu').addClass('active').stop().slideDown(200);
 	});
+
+	//menu options selected
 	$('#menu ul li.btn').click(function() {
 		if ($(this).hasClass('selected'))
 			return;
@@ -146,6 +121,23 @@ $(function() {
 		}else if ($(this).hasClass('timer')) {
 			$('.mode').stop().fadeOut(200);
 			$('#timer').stop().delay(200).fadeIn(200);
+		}
+	});
+
+	//toggle font size 
+	$('#menu button.size').click(function() {
+		var s = $(this).find('span.selected');
+		var c = $('section.container');
+		$(this).find('span').removeClass('selected');
+		if (c.hasClass('big')) {
+			c.removeClass('big').addClass('medium');
+			$(this).find('span.medium').addClass('selected');
+		} else if (c.hasClass('medium')) {
+			c.removeClass('medium').addClass('small');
+			$(this).find('span.small').addClass('selected');
+		} else if (c.hasClass('small')) {
+			c.removeClass('small').addClass('big');
+			$(this).find('span.big').addClass('selected');
 		}
 	});
 
