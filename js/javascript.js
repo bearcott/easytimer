@@ -64,8 +64,7 @@ var Clock = function(container) {
 		//core function to start timer
 		main.interval = setInterval(function() {
 			var now = new Date();
-			var diff = new Date(Math.abs(now.getTime() - main.curr + main.diff));
-			console.log(main.diff);
+			var diff = new Date(now.getTime() - main.curr + main.diff);
 
 			//truncate last digit of miliseconds.
 			var mili = diff.getMilliseconds();
@@ -79,19 +78,79 @@ var Clock = function(container) {
 		return true;
 	};
 	this.stop = function() {
+		this.container.removeClass('active');
 		var now = new Date();
 		main.diff = now.getTime() - main.curr + main.diff;
 		clearInterval(main.interval);
 		return true;
 	};
 	this.reset = function() {
-		dis.mili.html("00");
-		dis.second.html("00");
-		dis.minute.html("00");
-		dis.hour.html("0");
+		this.mili.html("00");
+		this.second.html("00");
+		this.minute.html("00");
+		this.hour.html("0");
+		this.container.removeClass('active');
+		this.container.removeClass('reverse');
+		this.container.find('.reset').hide();
 		main.diff = false;
 	}
+	this.setReverse = function(edit) {
+		var mili = edit.find(".mili").val();
+		var second = edit.find(".second").val();
+		var minute = edit.find(".minute").val();
+		var hour = edit.find(".hour").val();
+		this.mili.html(mili);
+		this.second.html(second);
+		this.minute.html(minute);
+		this.hour.html(hour);
+		main.diff = mili*10 + second*1000 + minute*60000 + hour*3600000;
+	}
+	this.startReverse = function() {
+		//logic before processing
+		main.curr = new Date();
+		if (main.diff)
+			main.curr = main.curr.getTime();
+		else
+			main.curr = main.curr.getTime();
+		dis = this;
+
+		//core function to start timer
+		main.interval = setInterval(function() {
+			var now = new Date();
+			var diff = new Date(main.diff - (now.getTime() - main.curr));
+
+			//truncate last digit of miliseconds.
+			var mili = diff.getMilliseconds();
+			mili = Math.trunc(mili/10);
+
+			dis.mili.html(keepZero(mili));
+			dis.second.html(keepZero(diff.getSeconds()));
+			dis.minute.html(keepZero(diff.getMinutes()));
+			dis.hour.html(diff.getHours() - 18);
+
+			//stop the timer if it reaches 0.
+			if (diff.getTime() <= 0) {
+				this.stopReverse();
+				this.reset();
+
+				//times up animation
+				this.container.addClass('finished').delay(1000).queue(function(){
+				    $(this).removeClass('finished').dequeue();
+				});
+				
+			}
+		}.bind(this), 35);
+	}
+	this.stopReverse = function() {
+		this.container.removeClass('active');
+		var now = new Date();
+		main.diff = main.diff - (now.getTime() - main.curr);
+		clearInterval(main.interval);
+		return true;
+	}
 }
+
+
 
 $(function() {
 	var clock = new Clock($('#clock'));
@@ -141,14 +200,71 @@ $(function() {
 			return;
 		if ($('#timer').hasClass('active')) {
 			$('#timer').removeClass('active')
-			timer.stop();
-		} else if (timer.start())
-			$('#timer').addClass('active');
+			if ($('#timer').hasClass('reverse')) {
+				timer.stopReverse();
+			}else{
+				timer.stop();
+			}
+		} else{
+			if ($('#timer').hasClass('reverse')) {
+				timer.startReverse();
+				$('#timer').addClass('active');
+				$('#timer .reset').fadeIn();
+			}else{
+				timer.start();
+				$('#timer').addClass('active');
+				$('#timer .reset').fadeIn();
+			}
+		}
 	});
 
 	//reset timer function
 	$('#timer .reset').click(function() {
+		timer.stop();
 		timer.reset();
+		$(this).hide();
+	});
+
+	//editing timer semantics
+	$('#timer input').keydown(function(e) { //make sure that u can only type numbers, arrow keys, backspace
+	    var key = e.keyCode ? e.keyCode : e.which;
+	    if (isNaN(String.fromCharCode(key)) 
+	    	&& (e.keyCode != 8) 
+	    	&& (e.keyCode != 37) 
+	    	&& (e.keyCode != 39)) return false;
+	});
+	$('#timer input').blur(function() { //fills in blank spaces
+		if ($(this).val() == "" || $(this).val() == 0)
+			if ($(this).hasClass('hour'))
+				$(this).val("0");
+			else
+				$(this).val("00");
+		if ($(this).val().length == 1 && !$(this).hasClass('hour'))
+			$(this).val("0" + $(this).val());
+	});
+
+	//set timer duration by click and hold 
+	var timeout;
+	$('#timer').mousedown(function() {
+		timeout = setTimeout(function() {
+			$('#timer .reset').click();
+			$(this).find('.container').hide();
+			$(this).find('.edit').show();
+			$(this).find('.confirm').show();
+		}.bind(this), 600);
+	}).bind('mouseup mouseleave', function() {
+		clearTimeout(timeout);
+	});
+
+	//confirm the edit timer back to normal timer
+	$('#timer .confirm').click(function() {
+		$this = $('#timer').addClass('reverse');
+
+		timer.setReverse($('#timer .edit'));
+
+		$this.find('.confirm').hide();
+		$this.find('.container').show();
+		$this.find('.edit').hide();
 	});
 
 	//toggle menu

@@ -18,13 +18,14 @@ a:hover, .btn:hover {
 }
 .btn {
 	color: rgba(255,255,255,0.8);
-	z-index: 100;
 	&:hover {
 		color: #FFF;
 		cursor: pointer;
 	}
 }
-
+.hide {
+	display: none;
+}
 
 
 
@@ -139,6 +140,8 @@ section.container {
 		margin: auto;
 		display: inline-block;
 		vertical-align: top;
+		position: relative;
+		box-shadow: 0 0 0 0 transparent;
 		transition: all 200ms ease-in-out;
 		span {
 			transition: background 200ms ease-in-out;
@@ -147,6 +150,25 @@ section.container {
 			background: #FFF;
 			color: desaturate(darken(@base,20%),30%) !important;
 			cursor: pointer;
+		}
+		input {  
+			border: none;
+			background: none;
+			font: 1em/1 helvetica;
+			display: inline-block;
+			font-weight: 100;
+			margin-top: -.1em;
+			padding: 1px;
+			width: 1.1em;
+			text-align: right;
+			border-bottom: .1em solid;
+			color: #FFF;
+			transition: border-bottom-width 200ms ease-in-out;
+			&:focus {
+				outline: none;
+				border-bottom-width: .2em;
+
+			}
 		}
 	}
 	#clock {
@@ -167,6 +189,10 @@ section.container {
 	#timer {
 		.container {
 			display: inline-block;
+			position:relative;
+		}
+		input.hour {
+			width: .55em !important;
 		}
 		.second {
 			color: rgba(255,255,255,0.5);
@@ -181,15 +207,33 @@ section.container {
 				}
 			}
 		}
-		&:reset {
-			content: "x";
+		&.finished {
+			.container {
+				box-shadow: 0 0 0 40px fade(saturate(lighten(@green,20%),50%),50%);
+				span {
+					color: #FFF !important;
+					background: saturate(lighten(@green,20%),30%) !important;
+				}
+			}
+		}
+		.edit {
+			display: none;
+		}
+		.btn {
 			position: absolute;
 			left: 100%;
-			top: 50%;
+			top: 1em;
 			margin-top: -.5em;
 			height: 1em;
 			width: 1em;
-			font-size: 1em;
+			font-size: .5em;
+			opacity: 0.4;
+			transition: all 200ms ease-in-out;
+			display: none;
+			&:hover {
+				cursor: pointer;
+				opacity: 0.7;
+			}
 		}
 	}
 }
