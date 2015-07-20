@@ -130,13 +130,15 @@ a:hover, .btn:hover {
 		line-height: 100px;
 		margin: auto;
 		padding: 20px;
+		display: inline-block;
+		vertical-align: top;
 		transition: all 200ms ease-in-out;
 		span {
 			transition: background 200ms ease-in-out;
 		}
 		&:hover span {
 			background: #FFF;
-			color: desaturate(darken(@base,20%),30%);
+			color: desaturate(darken(@base,20%),30%) !important;
 			cursor: pointer;
 		}
 	}
@@ -153,6 +155,20 @@ a:hover, .btn:hover {
 		}
 		.ampm {
 			font-weight: bold;
+		}
+	}
+	#timer {
+		.hour {
+			color: lighten(#999, 10%);
+		}
+		.minute {
+			color: lighten(#999, 20%);
+		}
+		.second {
+			color: lighten(#999, 30%);
+		}
+		.mili {
+			color: lighten(#999, 40%);
 		}
 	}
 }

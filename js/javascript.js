@@ -11,7 +11,16 @@ var Clock = function(container) {
 
 	this.container.addClass('one'); //set the mode to 1
 
-	this.interval;
+	this.interval; //interval for timer
+	this.diff = false; //time difference for timer
+
+	//helper function to add a zero.
+	function keepZero(num) {
+		if (num < 10)
+			return "0" + num;
+		else
+			return num;
+	}
 
 	this.refresh = function() {
 		var date = new Date();
@@ -31,28 +40,44 @@ var Clock = function(container) {
 			this.ampm.html("");
 		}
 
-		this.minute.html((date.getMinutes() < 10) ? "0" + date.getMinutes() : date.getMinutes());
+		this.minute.html(keepZero(date.getMinutes()));
 		if (!this.container.hasClass('three')) 
-			this.second.html((date.getSeconds() < 10) ? "0" + date.getSeconds() : date.getSeconds());
+			this.second.html(keepZero(date.getSeconds()));
 		else
 			this.second.html("");
+
+		return true;
 	};
 	this.start = function() {
 		var curr = new Date();
+		if (this.diff)
+			curr = this.diff.getTime() - curr.getTime();
+		else
+			curr = curr.getTime();
 		dis = this;
-		$.syncInterval(function() {
-			dis.mili.html(now.getMilliseconds() - curr.getMilliseconds());
-		},1000,500);
-		// this.interval = setInterval(function() {
-		// 	var now = new Date();
-		// 	dis.mili.html(now.getMilliseconds() - curr.getMilliseconds());
-		// }, 100)
+		
+		this.interval = setInterval(function() {
+			var now = new Date();
+			this.diff = new Date(Math.abs(now.getTime() - curr));
+			console.log(this.diff);
+
+			//truncate last digit of miliseconds.
+			var mili = this.diff.getMilliseconds();
+			mili = Math.trunc(mili/10);
+
+			dis.mili.html(keepZero(mili));
+			dis.second.html(keepZero(this.diff.getSeconds()));
+			dis.minute.html(keepZero(this.diff.getMinutes()));
+			dis.hour.html(this.diff.getHours() - 18);
+
+		}, 10);
+		return true;
 	};
 	this.stop = function() {
-
+		clearInterval(this.interval);
+		return true;
 	};
 }
-
 
 $(function() {
 	var clock = new Clock($('#clock'));
@@ -81,7 +106,7 @@ $(function() {
 			$('body').addClass('light');
 	})
 
-	//Set Time Type
+	//clock function
 	$('#clock').click(function() {
 		$this = $(this);
 		if ($this.hasClass('one')) {
@@ -98,7 +123,11 @@ $(function() {
 
 	//timer function
 	$('#timer').click(function() {
-		timer.start();
+		if ($('#timer').hasClass('active')) {
+			$('#timer').removeClass('active')
+			timer.stop();
+		} else if (timer.start())
+			$('#timer').addClass('active');
 	});
 
 	//toggle menu
