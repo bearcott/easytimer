@@ -11,8 +11,12 @@ var Clock = function(container) {
 
 	this.container.addClass('one'); //set the mode to 1
 
-	this.interval; //interval for timer
-	this.diff = false; //time difference for timer
+	//way around scope problems, its a javascript "pointer"
+	var main = {
+		interval : false,//interval for timer
+		curr : false, //starting time
+		diff : false //time difference for timer
+	}
 
 	//helper function to add a zero.
 	function keepZero(num) {
@@ -49,32 +53,35 @@ var Clock = function(container) {
 		return true;
 	};
 	this.start = function() {
-		var curr = new Date();
-		if (this.diff)
-			curr = this.diff.getTime() - curr.getTime();
+		//logic before processing
+		main.curr = new Date();
+		if (main.diff)
+			main.curr = main.curr.getTime();
 		else
-			curr = curr.getTime();
+			main.curr = main.curr.getTime();
 		dis = this;
-		
-		this.interval = setInterval(function() {
+
+		//core function to start timer
+		main.interval = setInterval(function() {
 			var now = new Date();
-			this.diff = new Date(Math.abs(now.getTime() - curr));
-			console.log(this.diff);
+			var diff = new Date(Math.abs(now.getTime() - main.curr + main.diff));
+			console.log(main.diff);
 
 			//truncate last digit of miliseconds.
-			var mili = this.diff.getMilliseconds();
+			var mili = diff.getMilliseconds();
 			mili = Math.trunc(mili/10);
 
 			dis.mili.html(keepZero(mili));
-			dis.second.html(keepZero(this.diff.getSeconds()));
-			dis.minute.html(keepZero(this.diff.getMinutes()));
-			dis.hour.html(this.diff.getHours() - 18);
-
-		}, 10);
+			dis.second.html(keepZero(diff.getSeconds()));
+			dis.minute.html(keepZero(diff.getMinutes()));
+			dis.hour.html(diff.getHours() - 18);
+		}, 35);
 		return true;
 	};
 	this.stop = function() {
-		clearInterval(this.interval);
+		var now = new Date();
+		main.diff = now.getTime() - main.curr + main.diff;
+		clearInterval(main.interval);
 		return true;
 	};
 }
