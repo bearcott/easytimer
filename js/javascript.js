@@ -84,6 +84,13 @@ var Clock = function(container) {
 		clearInterval(main.interval);
 		return true;
 	};
+	this.reset = function() {
+		dis.mili.html("00");
+		dis.second.html("00");
+		dis.minute.html("00");
+		dis.hour.html("0");
+		main.diff = false;
+	}
 }
 
 $(function() {
@@ -129,12 +136,19 @@ $(function() {
 	});
 
 	//timer function
-	$('#timer').click(function() {
+	$('#timer .container').click(function(e) {
+		if ($(e.target).hasClass('reset'))
+			return;
 		if ($('#timer').hasClass('active')) {
 			$('#timer').removeClass('active')
 			timer.stop();
 		} else if (timer.start())
 			$('#timer').addClass('active');
+	});
+
+	//reset timer function
+	$('#timer .reset').click(function() {
+		timer.reset();
 	});
 
 	//toggle menu
@@ -152,11 +166,11 @@ $(function() {
 		$('#menu ul li.btn').removeClass('selected');
 		$(this).addClass('selected');
 		if ($(this).hasClass('clock')) {
-			$('.mode').stop().fadeOut(200);
-			$('#clock').stop().delay(200).fadeIn(200);
+			$('.mode').hide();
+			$('#clock').show(200);
 		}else if ($(this).hasClass('timer')) {
-			$('.mode').stop().fadeOut(200);
-			$('#timer').stop().delay(200).fadeIn(200);
+			$('.mode').hide(200);
+			$('#timer').show(200);
 		}
 	});
 
