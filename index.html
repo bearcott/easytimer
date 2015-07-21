@@ -8,6 +8,7 @@
 </head>
 <body>
 	<i id="brightness" class="btn ion-ios-sunny-outline"></i>
+	<i id="scenic" class="btn ion-image"></i>
 	<i id="togglemenu" class="btn ion-navicon"></i>
 	<aside id="menu">
 		<ul>
@@ -21,7 +22,7 @@
 		</ul>
 	</aside>
 	<section class="container medium">
-		<div id="clock" class="mode">
+		<div id="clock" class="mode visible">
 			<div class="container">
 				<span class="hour">0</span><span>:</span><span class="minute">00</span><span class="second">00</span><span class="ampm">AM</span>
 			</div>
@@ -35,6 +36,7 @@
 			</div>
 			<span class="btn confirm ion-ios-checkmark-empty"></span>
 			<span class="btn reset ion-ios-refresh-empty"></span>
+			<audio id="ping" src="audio/chime.mp3" preload="auto"></audio>
 		</div>	
 	</section>
 

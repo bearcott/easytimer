@@ -18,6 +18,7 @@ a:hover, .btn:hover {
 }
 .btn {
 	color: rgba(255,255,255,0.8);
+	z-index: 100;
 	&:hover {
 		color: #FFF;
 		cursor: pointer;
@@ -39,6 +40,14 @@ a:hover, .btn:hover {
 	width: 40px;
 	font: 40px/1 Helvetica;
 }
+#scenic {
+	position: absolute;
+	font: 40px/1 Helvetica;
+	margin: 10px;
+	width: 40px;
+	bottom: 0;
+	right: 0;
+}
 #togglemenu {
 	position: absolute;
 	top: 0;
@@ -56,7 +65,7 @@ a:hover, .btn:hover {
 	width: 200px;
 	height: 100%;
 	max-width: 100%;
-	background: rgba(0,0,0,0.3);
+	background: rgba(0,0,0,0.2);
 	display: none;
 	z-index: 1337;
 	ul { 
@@ -118,6 +127,7 @@ section.container {
 	text-align: center;
 	font-size: 100px;
 	transition: all 200ms ease-in-out;
+	z-index: 50;
 	&.big {
 		height: 200px;
 		margin-top: -100px;
@@ -240,7 +250,18 @@ section.container {
 
 
 
-
+body.scenic {
+	background: url('../img/lol.jpg');
+	background-size: cover;
+	&:after {
+		content: "";
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		background: rgba(0,0,0,0.3);
+		z-index: 0;
+	}
+}
 body.light {
 	background: #F9F9F9;
 	color: saturate(lighten(@base, 20%),10%);

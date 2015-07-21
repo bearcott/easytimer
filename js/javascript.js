@@ -133,6 +133,7 @@ var Clock = function(container) {
 				this.stopReverse();
 				this.reset();
 
+				this.container.find('#ping')[0].play(); //play audio
 				//times up animation
 				this.container.addClass('finished').delay(1000).queue(function(){
 				    $(this).removeClass('finished').dequeue();
@@ -171,17 +172,27 @@ $(function() {
 	if (tod > 8 && tod < 20)
 		$('body').addClass('light');
 
-	//switch brightness
+	//toggle brightness
 	$('#brightness').click(function() {
+		if ($('body').hasClass('scenic'))
+			return;
 		if ($('body').hasClass('light'))
 			$('body').removeClass('light')
 		else
 			$('body').addClass('light');
+	});
+
+	//toggle scenic 
+	$('#scenic').click(function() {
+		if ($('body').hasClass('scenic'))
+			$('body').removeClass('scenic');
+		else
+			$('body').removeClass('light').addClass('scenic');
 	})
 
 	//clock function
-	$('#clock').click(function() {
-		$this = $(this);
+	$('#clock .container').click(function() {
+		$this = $(this).parent();
 		if ($this.hasClass('one')) {
 			$this.removeClass('one');
 			$this.addClass('two');
@@ -283,10 +294,10 @@ $(function() {
 		$(this).addClass('selected');
 		if ($(this).hasClass('clock')) {
 			$('.mode').hide();
-			$('#clock').show(200);
+			$('#clock').show().addClass('visible');
 		}else if ($(this).hasClass('timer')) {
-			$('.mode').hide(200);
-			$('#timer').show(200);
+			$('.mode').hide();
+			$('#timer').show().addClass('visible');
 		}
 	});
 
@@ -306,13 +317,22 @@ $(function() {
 			$(this).find('span.big').addClass('selected');
 		}
 	});
-
-	$('body').keypress(function(e) {
+	$('body').keydown(function(e) {
 		//alert(e.keyCode);
-		if (e.which == 98)
+		if (e.which == 66)
 			$('#brightness').click();
-		if (e.which == 109)
+		if (e.which == 77)
 			$('#togglemenu').click();
+		if (e.which == 32)
+			$(".mode.visible .container").click();
+		if (e.which == 84)
+			$('#menu ul li.btn.timer').click();
+		if (e.which == 67)
+			$('#menu ul li.btn.clock').click();
+		if (e.which == 13) {
+			if ($('#timer input').is(':focus'))
+				$('#timer .confirm').click();
+		}
 	});
 
 });
