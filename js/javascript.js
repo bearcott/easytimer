@@ -262,7 +262,7 @@ $(function() {
 			$(this).find('.container').hide();
 			$(this).find('.edit').show();
 			$(this).find('.confirm').show();
-		}.bind(this), 600);
+		}.bind(this), 400);
 	}).bind('mouseup mouseleave', function() {
 		clearTimeout(timeout);
 	});

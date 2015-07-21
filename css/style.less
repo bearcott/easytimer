@@ -1,6 +1,11 @@
 @base: #373C93;
 @green: #30B967;
 
+::selection {
+    color: #FFF; 
+    background: desaturate(@base,40%);
+}
+
 body {
 	background: desaturate(darken(@base,20%),30%);
 	margin: 0;
@@ -168,7 +173,6 @@ section.container {
 			display: inline-block;
 			font-weight: 100;
 			margin-top: -.1em;
-			padding: 1px;
 			width: 1.1em;
 			text-align: right;
 			border-bottom: .1em solid;
