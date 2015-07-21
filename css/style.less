@@ -28,9 +28,28 @@ a:hover, .btn:hover {
 		color: #FFF;
 		cursor: pointer;
 	}
+	&.disabled {
+		color: rgba(255,255,255,0.2);
+	}
 }
 .hide {
 	display: none;
+}
+.keybtn {
+	background: #FFF;
+	border: 0 solid rgba(0,0,0,0.1);
+	border-bottom-width: 2px;
+	border-right-width: 2px;
+	border-radius: 4px;
+	padding: .2em;
+	margin: .2em;
+	font-style: normal;
+	font-weight: bold;
+	color: #aaa;
+	width: 1.4em;
+	height: 1.4em;
+	font-size: .6em;
+	text-align: center;
 }
 
 
@@ -57,23 +76,26 @@ a:hover, .btn:hover {
 	position: absolute;
 	top: 0;
 	left: 0;
-	margin: 10px;
+	padding: 10px 20px;
+	height: 100%;
 	text-align: center;
 	width: 40px;
 	font: 40px/1 Helvetica;
 	z-index: 1338;
+	box-sizing: border-box;
 }
 #menu {
 	position: absolute;
 	left: 0;
 	top: 0;
-	width: 200px;
+	width: 15%;
 	height: 100%;
 	max-width: 100%;
-	background: rgba(0,0,0,0.2);
 	display: none;
 	z-index: 1337;
+	background: rgba(0,0,0,0.2);
 	ul { 
+		position: relative;
 		padding-top: 60px;
 		list-style: none;
 		li.btn {
@@ -111,6 +133,9 @@ a:hover, .btn:hover {
 			}
 			.small {
 				font-size: .8em;
+			}
+			i {
+				float: right;
 			}
 			.selected {
 				color: #FFF;
@@ -189,7 +214,7 @@ section.container {
 		& > * {
 		}
 		.second {
-			color: rgba(255,255,255,0.2);
+			color: rgba(255,255,255,0.5);
 		}
 		&:hover {
 			.second {
@@ -209,10 +234,10 @@ section.container {
 			width: .55em !important;
 		}
 		.second {
-			color: rgba(255,255,255,0.5);
+			color: rgba(255,255,255,0.7);
 		}
 		.mili {
-			color: rgba(255,255,255,0.2);
+			color: rgba(255,255,255,0.4);
 		}
 		&.active {
 			.container {
@@ -262,7 +287,7 @@ body.scenic {
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		background: rgba(0,0,0,0.3);
+		background: rgba(0,0,0,0.1);
 		z-index: 0;
 	}
 }
@@ -277,7 +302,7 @@ body.light {
 	}
 	#clock {
 		.second {
-			color: #ccc;
+			color: rgba(0,0,0,0.2);
 		}
 	}
 	#timer {

@@ -174,8 +174,10 @@ $(function() {
 
 	//toggle brightness
 	$('#brightness').click(function() {
-		if ($('body').hasClass('scenic'))
+		if ($('body').hasClass('scenic')) {
+			$('#scenic').click();
 			return;
+		}
 		if ($('body').hasClass('light'))
 			$('body').removeClass('light')
 		else
@@ -184,11 +186,14 @@ $(function() {
 
 	//toggle scenic 
 	$('#scenic').click(function() {
-		if ($('body').hasClass('scenic'))
+		if ($('body').hasClass('scenic')) {
 			$('body').removeClass('scenic');
-		else
+			$('#brightness').show();
+		} else {
 			$('body').removeClass('light').addClass('scenic');
-	})
+			$('#brightness').hide();
+		}
+	});
 
 	//clock function
 	$('#clock .container').click(function() {
@@ -240,9 +245,10 @@ $(function() {
 	$('#timer input').keydown(function(e) { //make sure that u can only type numbers, arrow keys, backspace
 	    var key = e.keyCode ? e.keyCode : e.which;
 	    if (isNaN(String.fromCharCode(key)) 
-	    	&& (e.keyCode != 8) 
-	    	&& (e.keyCode != 37) 
-	    	&& (e.keyCode != 39)) return false;
+	    	&& (e.keyCode != 8) //backspace
+	    	&& (e.keyCode != 37) //left arrow
+	    	&& (e.keyCode != 39)) //right arrow
+	    	return false;
 	});
 	$('#timer input').blur(function() { //fills in blank spaces
 		if ($(this).val() == "" || $(this).val() == 0)
@@ -255,20 +261,32 @@ $(function() {
 	});
 
 	//set timer duration by click and hold 
-	var timeout;
+	var timertimeout;
 	$('#timer').mousedown(function() {
-		timeout = setTimeout(function() {
+		timertimeout = setTimeout(function() {
 			$('#timer .reset').click();
 			$(this).find('.container').hide();
 			$(this).find('.edit').show();
 			$(this).find('.confirm').show();
 		}.bind(this), 400);
 	}).bind('mouseup mouseleave', function() {
-		clearTimeout(timeout);
+		clearTimeout(timertimeout);
+	});
+	//set clock alarm duration by click and hold 
+	var clocktimeout;
+	$('#clock').mousedown(function() {
+		clocktimeout = setTimeout(function() {
+			$(this).find('.container').hide();
+			$(this).find('.edit').show();
+			$(this).find('.confirm').show();
+		}.bind(this), 400);
+	}).bind('mouseup mouseleave', function() {
+		clearTimeout(clocktimeout);
 	});
 
 	//confirm the edit timer back to normal timer
 	$('#timer .confirm').click(function() {
+		$('#timer input').blur();
 		$this = $('#timer').addClass('reverse');
 
 		timer.setReverse($('#timer .edit'));
@@ -279,11 +297,11 @@ $(function() {
 	});
 
 	//toggle menu
-	$('#togglemenu').click(function() {
-		if ($('#menu').hasClass('active'))
-			$('#menu').removeClass('active').stop().slideUp(200);
-		else
+	$('#togglemenu').mouseenter(function() {
 			$('#menu').addClass('active').stop().slideDown(200);
+	})
+	$('#menu').mouseleave(function() {
+		$('#menu').removeClass('active').stop().slideUp(200);
 	});
 
 	//menu options selected
@@ -319,17 +337,22 @@ $(function() {
 	});
 	$('body').keydown(function(e) {
 		//alert(e.keyCode);
-		if (e.which == 66)
+		if (e.which == 66) // b
 			$('#brightness').click();
-		if (e.which == 77)
-			$('#togglemenu').click();
-		if (e.which == 32)
+		// if (e.which == 77) // m
+		// 	$('#togglemenu').click();
+		if (e.which == 32) { //space bar
+			if ($('input').is(':focus'))
+				return;
 			$(".mode.visible .container").click();
-		if (e.which == 84)
+		}
+		if (e.which == 84) // t
 			$('#menu ul li.btn.timer').click();
-		if (e.which == 67)
+		if (e.which == 67) // c
 			$('#menu ul li.btn.clock').click();
-		if (e.which == 13) {
+		if (e.which == 65) // a
+			$('#menu ul button.size').click();
+		if (e.which == 13) { //enter
 			if ($('#timer input').is(':focus'))
 				$('#timer .confirm').click();
 		}
