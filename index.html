@@ -7,6 +7,17 @@
 	<link href="css/style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+	<div id="preload"></div>
+	<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+	  var js, fjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) return;
+	  js = d.createElement(s); js.id = id;
+	  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4&appId=635924993131821";
+	  fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));</script>
+
+	<audio id="ping" src="audio/chime.mp3" preload="auto"></audio>
 	<i id="brightness" class="btn ion-ios-sunny-outline"></i>
 	<i id="scenic" class="btn ion-image"></i>
 	<i id="togglemenu" class="btn ion-navicon"></i>
@@ -21,28 +32,44 @@
 				<i class="keybtn">A</i>
 			</button>
 		</ul>
+		<ul class="footer">
+			<li><input class="message special" placeholder="enter a message.."></li>
+			<li><input class="backgroundurl special" placeholder="URL to background"></li>
+			<br>
+		</ul>
+		<div class="social">
+			<a href="https://github.com/bearcott/easytimer/issues"><i class="ion-lightbulb"></i> suggest a feature</a>
+			<a href="https://github.com/bearcott/easytimer"><i class="ion-code"></i> source</a>
+			<hr>
+			<a href="https://twitter.com/share" class="twitter-share-button" data-text="Just got to use a simple ergonomic online stopwatch/timer! Check it out.">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+			<div class="fb-like" data-href="http://bearcott.com/easytimer" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>
+		</div>
 	</aside>
+	<section>
+		<div id="message"></div>
+	</section>
 	<section class="container medium">
-		<div id="clock" class="mode visible">
+		<div id="clock" class="mode one visible">
 			<div class="container">
-				<span class="hour">0</span><span>:</span><span class="minute">00</span><span class="second">00</span><span class="ampm">AM</span>
+				<span class="hour">0</span><span>:</span><span class="minute">00</span><span class="second">00</span><span class="ampm">am</span>
 			</div>
+			<div class="time"><i class="ion-close-round"></i><span></span></div>
 			<div class="edit">
-				<input class="hour" value="00" maxlength="1"><span>:</span><input class="minute" value="00" maxlength="2"><span>:</span><input class="second" value="00" maxlength="2"><span><span class="ampm">AM</span>
+				<input class="hour" value="00" maxlength="2"><span>:</span><input class="minute" value="00" maxlength="2"> <button class="btn ampm">am</button>
 			</div>
-			<span class="btn confirm ion-ios-checkmark-empty"></span>
-			<audio id="ping" src="audio/chime.mp3" preload="auto"></audio>
+			<span class="btn setter confirm ion-ios-checkmark-empty"></span>
 		</div>	
 		<div id="timer" class="mode">
 			<div class="container">
 				<span class="hour">0</span><span>:</span><span class="minute">00</span><span>:</span><span class="second">00</span><span>:</span><span class="mili">00</span>
 			</div>
 			<div class="edit">
-				<input class="hour" value="0" maxlength="1"><span>:</span><input class="minute" value="00" maxlength="2"><span>:</span><input class="second" value="00" maxlength="2"><span>:</span><input class="mili" value="00" maxlength="2">
+				<input class="hour" value="0" maxlength="12"><span>:</span><input class="minute" value="00" maxlength="2"><span>:</span><input class="second" value="00" maxlength="2"><span>:</span><input class="mili" value="00" maxlength="2">
 			</div>
-			<span class="btn confirm ion-ios-checkmark-empty"></span>
-			<span class="btn reset ion-ios-refresh-empty"></span>
-			<audio id="ping" src="audio/chime.mp3" preload="auto"></audio>
+			<span class="btn setter confirm ion-ios-checkmark-empty"></span>
+			<span class="btn setter reset ion-ios-refresh-empty"></span>
 		</div>	
 	</section>
 

@@ -2,20 +2,20 @@
 //clock class
 // mode: 1 - normal, 2 - military, 3 - no seconds
 var Clock = function(container) {
-	this.container = container;
+	this.wrapper = container;
+	this.container = container.find('.container');
 	this.hour = this.container.find('.hour');
 	this.minute = this.container.find('.minute');
 	this.second = this.container.find('.second');
 	this.mili = this.container.find('.mili');
 	this.ampm = this.container.find('.ampm');
 
-	this.container.addClass('one'); //set the mode to 1
-
 	//way around scope problems, its a javascript "pointer"
 	var main = {
 		interval : false,//interval for timer
 		curr : false, //starting time
-		diff : false //time difference for timer
+		diff : false, //time difference for timer
+		alarm : false //time for alarm
 	}
 
 	//helper function to add a zero.
@@ -28,7 +28,17 @@ var Clock = function(container) {
 
 	this.refresh = function() {
 		var date = new Date();
-		if (!this.container.hasClass('two')) {
+		//ring alarm
+		var alarm = new Date(main.alarm);
+		if (date.getHours() == alarm.getHours() 
+			&& date.getMinutes() == alarm.getMinutes()
+			&& date.getSeconds() == alarm.getSeconds()) {
+			this.wrapper.find('.time').click();
+			this.cancelAlarm();
+			this.finished();
+		}
+
+		if (!this.wrapper.hasClass('two')) {
 			if (date.getHours() > 12) {
 				this.hour.html(date.getHours() - 12);
 				this.ampm.html("pm");
@@ -45,12 +55,88 @@ var Clock = function(container) {
 		}
 
 		this.minute.html(keepZero(date.getMinutes()));
-		if (!this.container.hasClass('three')) 
+		if (!this.wrapper.hasClass('three')) 
 			this.second.html(keepZero(date.getSeconds()));
 		else
 			this.second.html("");
 
 		return true;
+	};
+	this.setAlarmEdit = function() {
+		//set edit to current time
+		var date = new Date();
+		var $this = this.wrapper.find('.edit');
+		if (date.getHours() > 12) {
+			$this.find('.hour').val(date.getHours() - 12);
+			$this.find('.ampm').html("pm");
+		} else {
+			if (date.getHours() == 0)
+				$this.find('.hour').val(12);
+			else
+				$this.find('.hour').val(date.getHours());
+			$this.find('.ampm').html("am");
+		}
+
+		$this.find('.minute').val(keepZero(date.getMinutes()));
+	};
+	this.setAlarm = function() {
+		var date = new Date();
+		edit = this.wrapper.find('.edit');
+		var ampm = edit.find(".ampm").html();
+		var second = edit.find(".second").val();
+		var minute = edit.find(".minute").val();
+		var hour = edit.find(".hour").val();
+
+		
+		if (date.getHours() > 12) {
+			$this.find('.hour').val(date.getHours() - 12);
+			$this.find('.ampm').html("pm");
+		} else {
+			if (date.getHours() == 0)
+				$this.find('.hour').val(12);
+			else
+				$this.find('.hour').val(date.getHours());
+			$this.find('.ampm').html("am");
+		}
+		//determine whether am/pm
+		var a;
+		if (ampm == 'pm')
+			a = 43200000;
+		else
+			a = 0;
+		//set time
+		main.alarm = minute*60000 + (hour-18)*3600000 + a;
+		var alarm = new Date(main.alarm);
+		//temporary formatting
+		var m, ap;
+		h = alarm.getHours();
+		if (alarm.getHours() > 12) {
+			h -= 12;
+			ap = 'pm';
+		}else {
+			if (alarm.getHours() == 0) {
+				h = 12;
+				ap = 'pm'
+			}else{
+				ap = 'am';
+			}
+		}
+		this.wrapper.find('.time span').html(h + ":" + keepZero(alarm.getMinutes()) + ap);
+	}
+	this.cancelAlarm = function() {
+		main.alarm = false;
+	}
+	this.setReverse = function() {
+		edit = this.wrapper.find('.edit');
+		var mili = edit.find(".mili").val();
+		var second = edit.find(".second").val();
+		var minute = edit.find(".minute").val();
+		var hour = edit.find(".hour").val();
+		this.mili.html(mili);
+		this.second.html(second);
+		this.minute.html(minute);
+		this.hour.html(hour);
+		main.diff = mili*10 + second*1000 + minute*60000 + hour*3600000;
 	};
 	this.start = function() {
 		//logic before processing
@@ -74,11 +160,11 @@ var Clock = function(container) {
 			dis.second.html(keepZero(diff.getSeconds()));
 			dis.minute.html(keepZero(diff.getMinutes()));
 			dis.hour.html(diff.getHours() - 18);
-		}, 35);
+		}, 35); //this is amount of miliseconds between each tick. Cannot be too low or lag. Sacrifice accuracy :P
 		return true;
 	};
 	this.stop = function() {
-		this.container.removeClass('active');
+		this.wrapper.removeClass('active');
 		var now = new Date();
 		main.diff = now.getTime() - main.curr + main.diff;
 		clearInterval(main.interval);
@@ -89,22 +175,13 @@ var Clock = function(container) {
 		this.second.html("00");
 		this.minute.html("00");
 		this.hour.html("0");
-		this.container.removeClass('active');
-		this.container.removeClass('reverse');
-		this.container.find('.reset').hide();
+		this.wrapper.removeClass('active');
+		this.wrapper.removeClass('reverse');
+		this.wrapper.find('.reset').hide();
 		main.diff = false;
 	}
-	this.setReverse = function(edit) {
-		var mili = edit.find(".mili").val();
-		var second = edit.find(".second").val();
-		var minute = edit.find(".minute").val();
-		var hour = edit.find(".hour").val();
-		this.mili.html(mili);
-		this.second.html(second);
-		this.minute.html(minute);
-		this.hour.html(hour);
-		main.diff = mili*10 + second*1000 + minute*60000 + hour*3600000;
-	}
+
+
 	this.startReverse = function() {
 		//logic before processing
 		main.curr = new Date();
@@ -133,21 +210,33 @@ var Clock = function(container) {
 				this.stopReverse();
 				this.reset();
 
-				this.container.find('#ping')[0].play(); //play audio
-				//times up animation
-				this.container.addClass('finished').delay(1000).queue(function(){
-				    $(this).removeClass('finished').dequeue();
-				});
+				this.finished();
 				
 			}
 		}.bind(this), 35);
 	}
 	this.stopReverse = function() {
-		this.container.removeClass('active');
+		this.wrapper.removeClass('active');
 		var now = new Date();
 		main.diff = main.diff - (now.getTime() - main.curr);
 		clearInterval(main.interval);
 		return true;
+	}
+	this.finished = function() {
+		$('#ping')[0].play(); //play audio
+		$('#ping')[0].currentTime=0;
+
+		//times up animation
+		this.wrapper
+		.addClass('finished').delay(400).queue(function(){
+		    $(this).removeClass('finished').dequeue();
+		}).delay(400).queue(function(){
+			$('#ping')[0].play(); //play audio agin!
+			$('#ping')[0].currentTime=0;
+		    $(this).addClass('finished').dequeue();
+		}).delay(1000).queue(function(){
+		    $(this).removeClass('finished').dequeue();
+		});
 	}
 }
 
@@ -184,16 +273,27 @@ $(function() {
 			$('body').addClass('light');
 	});
 
+
+
 	//toggle scenic 
 	$('#scenic').click(function() {
 		if ($('body').hasClass('scenic')) {
 			$('body').removeClass('scenic');
 			$('#brightness').show();
+			$('body').css('background-image','')
 		} else {
+			if ($('input.backgroundurl').val() != "")
+				$('body').css('background-image','url(' + $('input.backgroundurl').val() + ')')
 			$('body').removeClass('light').addClass('scenic');
 			$('#brightness').hide();
 		}
 	});
+
+	//cancel alarm
+	$('#clock .time').click(function() {
+		$(this).hide();
+		clock.cancelAlarm();
+	})
 
 	//clock function
 	$('#clock .container').click(function() {
@@ -241,8 +341,8 @@ $(function() {
 		$(this).hide();
 	});
 
-	//editing timer semantics
-	$('#timer input').keydown(function(e) { //make sure that u can only type numbers, arrow keys, backspace
+	//editing timer/clock semantics
+	$('#timer input, #clock input').keydown(function(e) { //make sure that u can only type numbers, arrow keys, backspace
 	    var key = e.keyCode ? e.keyCode : e.which;
 	    if (isNaN(String.fromCharCode(key)) 
 	    	&& (e.keyCode != 8) //backspace
@@ -250,7 +350,10 @@ $(function() {
 	    	&& (e.keyCode != 39)) //right arrow
 	    	return false;
 	});
-	$('#timer input').blur(function() { //fills in blank spaces
+	$('#timer input, #clock input').blur(function() { //fills in blank spaces
+		if ($(this).hasClass('hour'))
+			if ($(this).val() > 12)
+				$(this).val(12);
 		if ($(this).val() == "" || $(this).val() == 0)
 			if ($(this).hasClass('hour'))
 				$(this).val("0");
@@ -260,28 +363,39 @@ $(function() {
 			$(this).val("0" + $(this).val());
 	});
 
-	//set timer duration by click and hold 
+	//set timer duration by click and hold
+	var holdduration = 400;
 	var timertimeout;
-	$('#timer').mousedown(function() {
+	$('#timer .container').mousedown(function() {
 		timertimeout = setTimeout(function() {
 			$('#timer .reset').click();
-			$(this).find('.container').hide();
-			$(this).find('.edit').show();
-			$(this).find('.confirm').show();
-		}.bind(this), 400);
+			$('#timer').find('.container').hide();
+			$('#timer').find('.edit').show();
+			$('#timer').find('.confirm').show();
+		}.bind(this), holdduration);
 	}).bind('mouseup mouseleave', function() {
 		clearTimeout(timertimeout);
 	});
 	//set clock alarm duration by click and hold 
 	var clocktimeout;
-	$('#clock').mousedown(function() {
+	$('#clock .container').mousedown(function() {
 		clocktimeout = setTimeout(function() {
-			$(this).find('.container').hide();
-			$(this).find('.edit').show();
-			$(this).find('.confirm').show();
-		}.bind(this), 400);
+			clock.setAlarmEdit();
+			$('#clock').find('.container').hide();
+			$('#clock').find('.time').hide();
+			$('#clock').find('.edit').show();
+			$('#clock').find('.confirm').show();
+		}.bind(this), holdduration);
 	}).bind('mouseup mouseleave', function() {
 		clearTimeout(clocktimeout);
+	});
+
+	//let ampm switch between am and pm
+	$('#clock .btn.ampm').click(function(){
+		if ($(this).html() == 'am')
+			$(this).html('pm')
+		else if ($(this).html() == 'pm')
+			$(this).html('am')
 	});
 
 	//confirm the edit timer back to normal timer
@@ -289,15 +403,28 @@ $(function() {
 		$('#timer input').blur();
 		$this = $('#timer').addClass('reverse');
 
-		timer.setReverse($('#timer .edit'));
+		timer.setReverse();
 
 		$this.find('.confirm').hide();
 		$this.find('.container').show();
 		$this.find('.edit').hide();
 	});
 
+	//confirm the edit clock back to normal clock
+	$('#clock .confirm').click(function() {
+		$('#clock input').blur();
+		$this = $('#clock');
+
+		clock.setAlarm();
+
+		$this.find('.time').show();
+		$this.find('.confirm').hide();
+		$this.find('.container').show();
+		$this.find('.edit').hide();
+	});
+
 	//toggle menu
-	$('#togglemenu').mouseenter(function() {
+	$('#togglemenu, #togglemenu:after').mouseenter(function() {
 			$('#menu').addClass('active').stop().slideDown(200);
 	})
 	$('#menu').mouseleave(function() {
@@ -311,10 +438,10 @@ $(function() {
 		$('#menu ul li.btn').removeClass('selected');
 		$(this).addClass('selected');
 		if ($(this).hasClass('clock')) {
-			$('.mode').hide();
+			$('.mode').hide().removeClass('visible');
 			$('#clock').show().addClass('visible');
 		}else if ($(this).hasClass('timer')) {
-			$('.mode').hide();
+			$('.mode').hide().removeClass('visible');
 			$('#timer').show().addClass('visible');
 		}
 	});
@@ -335,14 +462,37 @@ $(function() {
 			$(this).find('span.big').addClass('selected');
 		}
 	});
+
+	$('input.message').keyup(function() {
+		$('#message').html($('<div/>').html($(this).val()).html());
+	});
+	$('input.backgroundurl').keyup(function(e) {
+		var v = $(this).val();
+		if (v == "") {
+			$('body').css('background-image','')
+		}
+		//loading image
+		var img = new Image();
+		img.src = v;
+		img.onerror = function() {console.log("failed to load that image..")}
+		img.onload = function() {
+			if (!$('body').hasClass('scenic'))
+				$('#scenic').click();
+			$('body').css('background-image','url(' + v + ')');
+		};
+	});
+
 	$('body').keydown(function(e) {
+
+		if ($(e.target).hasClass('special'))
+			return
 		//alert(e.keyCode);
 		if (e.which == 66) // b
 			$('#brightness').click();
 		// if (e.which == 77) // m
 		// 	$('#togglemenu').click();
 		if (e.which == 32) { //space bar
-			if ($('input').is(':focus'))
+			if ($('.edit').is(':visible'))
 				return;
 			$(".mode.visible .container").click();
 		}
@@ -352,9 +502,11 @@ $(function() {
 			$('#menu ul li.btn.clock').click();
 		if (e.which == 65) // a
 			$('#menu ul button.size').click();
+		if (e.which == 27) // esc
+			$('.mode.visible .reset').click();
 		if (e.which == 13) { //enter
-			if ($('#timer input').is(':focus'))
-				$('#timer .confirm').click();
+			if ($('.edit').is(':visible'))
+				$('.mode.visible .confirm').click();
 		}
 	});
 

@@ -7,7 +7,8 @@
 }
 
 body {
-	background: desaturate(darken(@base,20%),30%);
+	background-color: desaturate(darken(@base,20%),30%);
+	background-size: cover;
 	margin: 0;
 	padding: 0;
 	color: #FFF;
@@ -17,6 +18,10 @@ body {
 ul {
 	margin: 0;
 	padding: 0;
+}
+a {
+	color: inherit;
+	text-decoration: none;
 }
 a:hover, .btn:hover {
 	cursor: pointer;
@@ -55,6 +60,16 @@ a:hover, .btn:hover {
 
 
 
+#message {
+	position: absolute;
+	top: 15%;
+	left: 25%;
+	width: 50%;
+	font-size: 3em;
+	font-weight: bold;
+	text-align: center;
+	z-index: 100;
+}
 #brightness {  
 	position: absolute;
 	top: 0;
@@ -77,12 +92,20 @@ a:hover, .btn:hover {
 	top: 0;
 	left: 0;
 	padding: 10px 20px;
-	height: 100%;
 	text-align: center;
 	width: 40px;
 	font: 40px/1 Helvetica;
 	z-index: 1338;
 	box-sizing: border-box;
+}
+#togglemenu:after {
+	z-index: 1;
+	content: "";
+	position: fixed;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 10px;
 }
 #menu {
 	position: absolute;
@@ -94,6 +117,45 @@ a:hover, .btn:hover {
 	display: none;
 	z-index: 1337;
 	background: rgba(0,0,0,0.2);
+	input {
+		width: 90%;
+		margin: 20px 5%;
+		font-size: 1em;
+		border: none;
+		color: inherit;
+		background: none;
+		border-bottom: 5px solid;
+		transition: all 200ms ease-in-out;
+		&:focus {
+			outline: none;
+			box-shadow: 0 5px;
+		}
+	}
+	.social {
+		position: absolute;
+		width: 80%;
+		padding: 10%;
+		bottom: 0;
+		left: 0;
+		font-size: .8em;
+		& > * {
+			float: left;
+			margin: 2px;
+			margin-top: 10px;
+		}
+		.fb_iframe_widget span {
+			vertical-align: top !important;
+		}
+	}
+	hr {
+		display: block;
+		clear: both;
+		width: 100%;
+		color: inherit;
+		border: none;
+		border-bottom: 2px dashed;
+		margin: 10px 0;
+	}
 	ul { 
 		position: relative;
 		padding-top: 60px;
@@ -119,7 +181,7 @@ a:hover, .btn:hover {
 			width: 100%;
 			background: none;
 			border: none;
-			color: #555;
+			color: rgba(255,255,255,0.3);
 			font-size: 1em;
 			text-align: left;
 			&:focus {
@@ -142,7 +204,7 @@ a:hover, .btn:hover {
 			}
 			&:hover {
 				cursor: pointer;
-				color: #999 !important;
+				color: rgba(255,255,255,0.5) !important;
 			}
 		}
 	}
@@ -159,8 +221,8 @@ section.container {
 	transition: all 200ms ease-in-out;
 	z-index: 50;
 	&.big {
-		height: 200px;
-		margin-top: -100px;
+		height: 240px;
+		margin-top: -120px;
 		.mode {
 			font-size: 200px;
 		}
@@ -176,22 +238,53 @@ section.container {
 	}
 	.mode {
 		font-weight: 100;
-		line-height: 1;
+		line-height: 1.2;
 		margin: auto;
 		display: inline-block;
 		vertical-align: top;
 		position: relative;
-		box-shadow: 0 0 0 0 transparent;
-		transition: all 200ms ease-in-out;
-		span {
-			transition: background 200ms ease-in-out;
+		box-shadow: 0 0 0 0 transparent; 
+		.container {
+			border-radius: .1em;
+			padding: 0 .2em;
+			&:hover {
+				background: #FFF;
+				span {
+					color: desaturate(darken(@base,20%),30%) !important;
+				}
+				cursor: pointer;
+			}
+			transition: all 200ms ease-in-out;
 		}
-		.container:hover span {
-			background: #FFF;
-			color: desaturate(darken(@base,20%),30%) !important;
-			cursor: pointer;
+		.edit {
+			display: none;
 		}
-		input {  
+		.time {
+			position: absolute;
+			font-weight: bold;
+			bottom: 0;
+			right: 0;
+			margin-right: 1em;
+			padding: 0 .2em;
+			font-size: .2em;
+			color: lighten(@green,20%);
+			border-radius: .2em;
+			transition: all 200ms ease-in-out;
+			i {
+				opacity: 0;
+				padding: 0 .2em;
+				font-size: .8em;
+			}
+			&:hover {
+				background: lighten(@green,20%);
+				color: #FFF;
+				cursor: pointer;
+				i {
+					opacity: .5;
+				}
+			}
+		}
+		input, .ampm.btn {  
 			border: none;
 			background: none;
 			font: 1em/1 helvetica;
@@ -201,12 +294,43 @@ section.container {
 			width: 1.1em;
 			text-align: right;
 			border-bottom: .1em solid;
-			color: #FFF;
+			color: inherit;
 			transition: border-bottom-width 200ms ease-in-out;
 			&:focus {
 				outline: none;
 				border-bottom-width: .2em;
-
+			}
+		}
+		.ampm.btn {
+			padding: 0;
+			height: 1.25em;
+			width: initial;
+			&:focus {
+				border-bottom-width: .1em;
+			}
+		}
+		.setter {
+			position: absolute;
+			left: 100%;
+			top: 1em;
+			margin-top: -.8em;
+			height: 1em;
+			width: 1em;
+			font-size: .8em;
+			opacity: 0.4;
+			display: none;
+			&:hover {
+				cursor: pointer;
+				opacity: 0.7;
+			}
+		}
+		&.finished {
+			.container {
+				box-shadow: 0 0 0 30px fade(saturate(lighten(@green,20%),50%),40%);
+				span {
+					color: #FFF !important;
+				}
+				background: saturate(lighten(@green,20%),30%) !important;
 			}
 		}
 	}
@@ -215,11 +339,6 @@ section.container {
 		}
 		.second {
 			color: rgba(255,255,255,0.5);
-		}
-		&:hover {
-			.second {
-				color: rgba(0,0,0,0.3);
-			}
 		}
 		.ampm {
 			font-weight: bold;
@@ -241,37 +360,9 @@ section.container {
 		}
 		&.active {
 			.container {
-				&:hover span {
+				&:hover {
 					background: saturate(lighten(@green,20%),30%);
 				}
-			}
-		}
-		&.finished {
-			.container {
-				box-shadow: 0 0 0 40px fade(saturate(lighten(@green,20%),50%),50%);
-				span {
-					color: #FFF !important;
-					background: saturate(lighten(@green,20%),30%) !important;
-				}
-			}
-		}
-		.edit {
-			display: none;
-		}
-		.btn {
-			position: absolute;
-			left: 100%;
-			top: 1em;
-			margin-top: -.5em;
-			height: 1em;
-			width: 1em;
-			font-size: .5em;
-			opacity: 0.4;
-			transition: all 200ms ease-in-out;
-			display: none;
-			&:hover {
-				cursor: pointer;
-				opacity: 0.7;
 			}
 		}
 	}
@@ -280,8 +371,7 @@ section.container {
 
 
 body.scenic {
-	background: url('../img/lol.jpg');
-	background-size: cover;
+	background-image: url('../img/lol.jpg');
 	&:after {
 		content: "";
 		position: absolute;
@@ -291,13 +381,19 @@ body.scenic {
 		z-index: 0;
 	}
 }
+#preload { background: url('../img/lol.jpg') no-repeat -9999px -9999px; }
+
 body.light {
-	background: #F9F9F9;
+	background-color: #F9F9F9;
 	color: saturate(lighten(@base, 20%),10%);
 	.mode {
-		.container:hover span {
-			background: saturate(lighten(@base, 20%),10%);
-			color: #FFF !important;
+		.container {
+			&:hover {
+				background: saturate(lighten(@base, 20%),10%) ;
+				span {
+					color: #FFF !important;
+				}
+			}
 		}
 	}
 	#clock {
@@ -328,7 +424,7 @@ body.light {
 	}
 	#menu {
 		background: rgba(255,255,255,0.5);
-		li {
+		.btn {
 			&:hover {
 				background: saturate(lighten(@base, 55%),50%) !important;
 			} 
