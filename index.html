@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Online Stopwatch Timer</title>
+	<title>Online Stopwatch Timer / Clock</title>
+	<meta name="description" content="A simple feature rich online timer/stopwatch designed to help you make presentations, or set world records, or whatever shenanigans you're up to." />
 	<link href="css/ionicons.min.css" rel="stylesheet" type="text/css">
 	<link href="css/style.css" rel="stylesheet" type="text/css">
 </head>
@@ -20,33 +21,35 @@
 	<audio id="ping" src="audio/chime.mp3" preload="auto"></audio>
 	<i id="brightness" class="btn ion-ios-sunny-outline"></i>
 	<i id="scenic" class="btn ion-image"></i>
-	<i id="togglemenu" class="btn ion-navicon"></i>
-	<aside id="menu">
-		<ul>
-			<li class="btn timer"><i class="keybtn">T</i> Timer</li>
-			<li class="btn clock selected"><i class="keybtn">C</i> Clock</li>
-			<button class="size">
-				<span class="big">A</span>
-				<span class="medium selected">A</span>
-				<span class="small">A</span>
-				<i class="keybtn">A</i>
-			</button>
-		</ul>
-		<ul class="footer">
-			<li><input class="message special" placeholder="enter a message.."></li>
-			<li><input class="backgroundurl special" placeholder="URL to background"></li>
-			<br>
-		</ul>
-		<div class="social">
-			<a href="https://github.com/bearcott/easytimer/issues"><i class="ion-lightbulb"></i> suggest a feature</a>
-			<a href="https://github.com/bearcott/easytimer"><i class="ion-code"></i> source</a>
-			<hr>
-			<a href="https://twitter.com/share" class="twitter-share-button" data-text="Just got to use a simple ergonomic online stopwatch/timer! Check it out.">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+	<section class="menu">
+		<i id="togglemenu" class="btn ion-navicon"></i>
+		<aside id="menu">
+			<ul>
+				<li class="btn timer"><i class="keybtn">T</i> Timer</li>
+				<li class="btn clock selected"><i class="keybtn">C</i> Clock</li>
+				<button class="size">
+					<span class="big">A</span>
+					<span class="medium selected">A</span>
+					<span class="small">A</span>
+					<i class="keybtn">A</i>
+				</button>
+			</ul>
+			<ul class="footer">
+				<li><input class="message special" placeholder="enter a message.."></li>
+				<li><input class="backgroundurl special" placeholder="URL to background"></li>
+				<br>
+			</ul>
+			<div class="social">
+				<a href="https://github.com/bearcott/easytimer/issues"><i class="ion-lightbulb"></i> suggest a feature</a>
+				<a href="https://github.com/bearcott/easytimer"><i class="ion-code"></i> source</a>
+				<hr>
+				<a href="https://twitter.com/share" class="twitter-share-button" data-text="Just got to use a simple ergonomic online stopwatch/timer! Check it out.">Tweet</a>
+	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
-			<div class="fb-like" data-href="http://bearcott.com/easytimer" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>
-		</div>
-	</aside>
+				<div class="fb-like" data-href="http://bearcott.com/easytimer" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>
+			</div>
+		</aside>
+	</section>
 	<section>
 		<div id="message"></div>
 	</section>

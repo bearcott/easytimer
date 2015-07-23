@@ -9,8 +9,10 @@
 body {
 	background-color: desaturate(darken(@base,20%),30%);
 	background-size: cover;
+	background-position: center;
 	margin: 0;
 	padding: 0;
+	min-width: 700px;
 	color: #FFF;
 	font: 14pt/1.5 Helvetica;
 	transition: background 200ms ease-in-out;
@@ -107,11 +109,18 @@ a:hover, .btn:hover {
 	height: 100%;
 	width: 10px;
 }
-#menu {
+section.menu {
 	position: absolute;
 	left: 0;
 	top: 0;
 	width: 15%;
+	height: 100%;
+}
+#menu {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
 	height: 100%;
 	max-width: 100%;
 	display: none;
@@ -121,6 +130,7 @@ a:hover, .btn:hover {
 		width: 90%;
 		margin: 20px 5%;
 		font-size: 1em;
+		line-height: 1.5;
 		border: none;
 		color: inherit;
 		background: none;

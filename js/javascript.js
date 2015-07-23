@@ -425,10 +425,12 @@ $(function() {
 
 	//toggle menu
 	$('#togglemenu, #togglemenu:after').mouseenter(function() {
-			$('#menu').addClass('active').stop().slideDown(200);
+		if ($('#menu').hasClass('active'))
+			return;
+		$('#menu').addClass('active').stop().css('left','-100%').show().animate({'left':'0'},200);
 	})
-	$('#menu').mouseleave(function() {
-		$('#menu').removeClass('active').stop().slideUp(200);
+	$('section.menu').mouseleave(function() {
+		$('#menu').removeClass('active').stop().css('left','0').animate({'left':'-100%'},200,function() { $(this).hide() });
 	});
 
 	//menu options selected
