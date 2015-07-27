@@ -254,7 +254,7 @@ $(function() {
 	//tick tock
 	var tick = setInterval(function() {
 		clock.refresh();
-	}, 100);
+	}, 1000);
 
 	//set brightness by time of day
 	var tod = (new Date()).getHours();
