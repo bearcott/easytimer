@@ -15,7 +15,9 @@ var Clock = function(container) {
 		interval : false,//interval for timer
 		curr : false, //starting time
 		diff : false, //time difference for timer
-		alarm : false //time for alarm
+		alarm : false, //time for alarm
+		circle : false, //cursor circle
+		circleInterval : false // interval for circle
 	}
 
 	//helper function to add a zero.
@@ -126,18 +128,6 @@ var Clock = function(container) {
 	this.cancelAlarm = function() {
 		main.alarm = false;
 	}
-	this.setReverse = function() {
-		edit = this.wrapper.find('.edit');
-		var mili = edit.find(".mili").val();
-		var second = edit.find(".second").val();
-		var minute = edit.find(".minute").val();
-		var hour = edit.find(".hour").val();
-		this.mili.html(mili);
-		this.second.html(second);
-		this.minute.html(minute);
-		this.hour.html(hour);
-		main.diff = mili*10 + second*1000 + minute*60000 + hour*3600000;
-	};
 	this.start = function() {
 		//logic before processing
 		main.curr = new Date();
@@ -182,6 +172,26 @@ var Clock = function(container) {
 	}
 
 
+
+
+	this.setReverse = function() {
+		edit = this.wrapper.find('.edit');
+		var mili = edit.find(".mili").val();
+		var second = edit.find(".second").val();
+		var minute = edit.find(".minute").val();
+		var hour = edit.find(".hour").val();
+
+		if (mili == 0 && second == 0 && minute == 0 && hour == 0)
+			return
+
+		this.mili.html(mili);
+		this.second.html(second);
+		this.minute.html(minute);
+		this.hour.html(hour);
+		main.diff = mili*10 + second*1000 + minute*60000 + hour*3600000;
+
+		this.wrapper.addClass('reverse');
+	};
 	this.startReverse = function() {
 		//logic before processing
 		main.curr = new Date();
@@ -222,20 +232,53 @@ var Clock = function(container) {
 		clearInterval(main.interval);
 		return true;
 	}
+
+	this.createCircle = function(e) {
+		main.circle = $('<div/>').attr('id','cursorCircle').css('top',e.pageY).css('left',e.pageX);
+		$('body').append($(main.circle));
+	}
+	this.expandCircle = function() {
+		var i = 50;
+		main.circleInterval = setInterval(function() {
+			$(main.circle).css({
+				'margin-top' : -i/2,
+				'margin-left' : -i/2,
+				width : i,
+				height : i
+			});
+			i++
+		}, 5);
+	}
+	this.removeCircle = function() {
+		$(main.circle).remove();
+		clearInterval(main.circleInterval);
+	}
+
 	this.finished = function() {
 		$('#ping')[0].play(); //play audio
 		$('#ping')[0].currentTime=0;
+		var f = $('#favicon').clone();
+		var i = $('<link/>').addClass('#favicon2').attr('rel','shortcut icon').attr('href','favicon-invert.ico');
+
+	    $('#favicon').remove();
+	    $('head').append(i.clone());
 
 		//times up animation
 		this.wrapper
 		.addClass('finished').delay(400).queue(function(){
 		    $(this).removeClass('finished').dequeue();
+		    $('#favicon2').remove();
+		    $('head').append(f.clone());
 		}).delay(400).queue(function(){
 			$('#ping')[0].play(); //play audio agin!
 			$('#ping')[0].currentTime=0;
 		    $(this).addClass('finished').dequeue();
+		    $('#favicon').remove();
+	    	$('head').append(i.clone());
 		}).delay(1000).queue(function(){
 		    $(this).removeClass('finished').dequeue();
+		    $('#favicon2').remove();
+		    $('head').append(f.clone());
 		});
 	}
 }
@@ -246,6 +289,7 @@ $(function() {
 	var clock = new Clock($('#clock'));
 	var timer = new Clock($('#timer'));
 
+
 	//set default mode to clock
 	$('.mode').hide();
 	$('#clock').show();
@@ -254,12 +298,16 @@ $(function() {
 	//tick tock
 	var tick = setInterval(function() {
 		clock.refresh();
-	}, 1000);
+	}, 200);
+	clock.refresh();
 
 	//set brightness by time of day
 	var tod = (new Date()).getHours();
 	if (tod > 8 && tod < 20)
 		$('body').addClass('light');
+
+
+	//EVENTS*************************
 
 	//toggle brightness
 	$('#brightness').click(function() {
@@ -267,10 +315,13 @@ $(function() {
 			$('#scenic').click();
 			return;
 		}
-		if ($('body').hasClass('light'))
+		if ($('body').hasClass('light')) {
 			$('body').removeClass('light')
-		else
+			localStorage.setItem('brightness','dark');
+		}else{
 			$('body').addClass('light');
+			localStorage.setItem('brightness','light');
+		}
 	});
 
 
@@ -281,11 +332,13 @@ $(function() {
 			$('body').removeClass('scenic');
 			$('#brightness').show();
 			$('body').css('background-image','')
+			localStorage.removeItem('scenic')
 		} else {
 			if ($('input.backgroundurl').val() != "")
 				$('body').css('background-image','url(' + $('input.backgroundurl').val() + ')')
 			$('body').removeClass('light').addClass('scenic');
 			$('#brightness').hide();
+			localStorage.setItem('scenic','true')
 		}
 	});
 
@@ -366,28 +419,36 @@ $(function() {
 	//set timer duration by click and hold
 	var holdduration = 400;
 	var timertimeout;
-	$('#timer .container').mousedown(function() {
+	$('#timer .container').mousedown(function(e) {
+		timer.createCircle(e);
+		timer.expandCircle();
 		timertimeout = setTimeout(function() {
 			$('#timer .reset').click();
 			$('#timer').find('.container').hide();
 			$('#timer').find('.edit').show();
 			$('#timer').find('.confirm').show();
+			timer.removeCircle();
 		}.bind(this), holdduration);
 	}).bind('mouseup mouseleave', function() {
 		clearTimeout(timertimeout);
+		timer.removeCircle();
 	});
 	//set clock alarm duration by click and hold 
 	var clocktimeout;
-	$('#clock .container').mousedown(function() {
+	$('#clock .container').mousedown(function(e) {
+		clock.createCircle(e);
+		clock.expandCircle();
 		clocktimeout = setTimeout(function() {
 			clock.setAlarmEdit();
 			$('#clock').find('.container').hide();
 			$('#clock').find('.time').hide();
 			$('#clock').find('.edit').show();
 			$('#clock').find('.confirm').show();
+			clock.removeCircle();
 		}.bind(this), holdduration);
 	}).bind('mouseup mouseleave', function() {
 		clearTimeout(clocktimeout);
+		clock.removeCircle();
 	});
 
 	//let ampm switch between am and pm
@@ -401,7 +462,7 @@ $(function() {
 	//confirm the edit timer back to normal timer
 	$('#timer .confirm').click(function() {
 		$('#timer input').blur();
-		$this = $('#timer').addClass('reverse');
+		$this = $('#timer');
 
 		timer.setReverse();
 
@@ -442,9 +503,11 @@ $(function() {
 		if ($(this).hasClass('clock')) {
 			$('.mode').hide().removeClass('visible');
 			$('#clock').show().addClass('visible');
+			localStorage.setItem('mode','clock');
 		}else if ($(this).hasClass('timer')) {
 			$('.mode').hide().removeClass('visible');
 			$('#timer').show().addClass('visible');
+			localStorage.setItem('mode','timer');
 		}
 	});
 
@@ -456,17 +519,21 @@ $(function() {
 		if (c.hasClass('big')) {
 			c.removeClass('big').addClass('medium');
 			$(this).find('span.medium').addClass('selected');
+			localStorage.setItem('size','medium');
 		} else if (c.hasClass('medium')) {
 			c.removeClass('medium').addClass('small');
 			$(this).find('span.small').addClass('selected');
+			localStorage.setItem('size','small');
 		} else if (c.hasClass('small')) {
 			c.removeClass('small').addClass('big');
 			$(this).find('span.big').addClass('selected');
+			localStorage.setItem('size','large');
 		}
 	});
 
 	$('input.message').keyup(function() {
-		$('#message').html($('<div/>').html($(this).val()).html());
+		$('#message').html($(this).val());
+		localStorage.setItem('message',$(this).val())
 	});
 	$('input.backgroundurl').keyup(function(e) {
 		var v = $(this).val();
@@ -481,6 +548,7 @@ $(function() {
 			if (!$('body').hasClass('scenic'))
 				$('#scenic').click();
 			$('body').css('background-image','url(' + v + ')');
+			localStorage.setItem('bg',v);
 		};
 	});
 
@@ -511,5 +579,55 @@ $(function() {
 				$('.mode.visible .confirm').click();
 		}
 	});
+
+
+
+	//restore from last session
+	if (localStorage.getItem('brightness') !== null) { //brightness
+		if (localStorage.getItem('brightness') == 'light') {
+			$('body').addClass('light')
+		} else if (localStorage.getItem('brightness') == 'dark') {
+			$('body').removeClass('light')
+		}
+	}
+
+	if (localStorage.getItem('bg') !== null) { //if stored background
+		$('input.backgroundurl').val(localStorage.getItem('bg'));
+	}
+
+	if (localStorage.getItem('scenic') !== null) { //if scenic
+		if (!$('body').hasClass('.scenic'))
+			$('#scenic').click();
+		$('input.backgroundurl').keyup()
+	}
+
+	if (localStorage.getItem('message') !== null) { //if message
+		$('input.message').val(localStorage.getItem('message')).keyup();
+	}
+
+	if (localStorage.getItem('mode') !== null) { //mode
+		if (localStorage.getItem('mode') == 'timer') {
+			$('#menu ul li.btn.timer').click();
+		} else if (localStorage.getItem('mode') == 'clock') {
+			$('#menu ul li.btn.clock').click();
+		}
+	}
+
+	if (localStorage.getItem('size') !== null) { //size
+		var s = localStorage.getItem('size');
+		var c = $('section.container');
+		$('#menu button.size').find('span').removeClass('selected');
+		$('#menu button.size').removeClass('big').removeClass('medium').removeClass('small');
+		if (s == 'big') {
+			c.addClass('big');
+			$('#menu button.size').find('span.big').addClass('selected');
+		} else if (s == 'medium') {
+			c.addClass('medium');
+			$('#menu button.size').find('span.medium').addClass('selected');
+		} else if (s == 'small') {
+			c.addClass('small');
+			$('#menu button.size').find('span.small').addClass('selected');
+		}
+	}
 
 });
