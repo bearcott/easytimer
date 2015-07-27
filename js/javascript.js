@@ -491,7 +491,9 @@ $(function() {
 		$('#menu').addClass('active').stop().css('left','-100%').show().animate({'left':'0'},200);
 	})
 	$('section.menu').mouseleave(function() {
-		$('#menu').removeClass('active').stop().css('left','0').animate({'left':'-100%'},200,function() { $(this).hide() });
+		setTimeout(function() {
+			$('#menu').removeClass('active').stop().css('left','0').animate({'left':'-100%'},200,function() { $(this).hide() });
+		},100);
 	});
 
 	//menu options selected
@@ -527,7 +529,7 @@ $(function() {
 		} else if (c.hasClass('small')) {
 			c.removeClass('small').addClass('big');
 			$(this).find('span.big').addClass('selected');
-			localStorage.setItem('size','large');
+			localStorage.setItem('size','big');
 		}
 	});
 
@@ -539,6 +541,7 @@ $(function() {
 		var v = $(this).val();
 		if (v == "") {
 			$('body').css('background-image','')
+			localStorage.removeItem('bg');
 		}
 		//loading image
 		var img = new Image();
@@ -609,7 +612,7 @@ $(function() {
 		if (localStorage.getItem('mode') == 'timer') {
 			$('#menu ul li.btn.timer').click();
 		} else if (localStorage.getItem('mode') == 'clock') {
-			$('#menu ul li.btn.clock').click();
+			$('#menu ul li.btn.clockS').click();
 		}
 	}
 
