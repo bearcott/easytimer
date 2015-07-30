@@ -575,8 +575,11 @@ $(function() {
 			$('#menu ul li.btn.clock').click();
 		if (e.which == 65) // a
 			$('#menu ul button.size').click();
-		if (e.which == 27) // esc
+		if (e.which == 27) { // esc
+			$('.mode.visible .confirm').click();
+			$('.mode.visible .time').click();
 			$('.mode.visible .reset').click();
+		}
 		if (e.which == 13) { //enter
 			if ($('.edit').is(':visible'))
 				$('.mode.visible .confirm').click();
